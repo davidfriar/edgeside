@@ -1,3 +1,2 @@
-export function hello(name:string){
-  return "Hello, " + name
-}
+export { handleRequest } from './request-handler'
+export { Config } from './types'

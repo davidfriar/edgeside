@@ -5,13 +5,26 @@
   "main": "lib/index.js",
   "types": "lib",
   "dependencies": {
-    "typescript": "^4.0.5"
+    "@types/he": "^1.1.1",
+    "@types/mustache": "^4.0.1",
+    "expression-eval": "^3.1.2",
+    "he": "^1.2.0",
+    "jsonata": "^1.8.3",
+    "mustache": "^4.0.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "typescript": "^4.0.5",
+    "@cloudflare/workers-types": "^2.0.0",
+    "prettier": "^2.0.5"
+  },
   "scripts": {
     "build": "tsc -p ."
   },
-  "keywords": ["edge", "cloudflare", "cloudflare workers"],
+  "keywords": [
+    "edge",
+    "cloudflare",
+    "cloudflare workers"
+  ],
   "author": "David Friar",
   "license": "MIT",
   "homepage": "https://docs.edgeside.org"
