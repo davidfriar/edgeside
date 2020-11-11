@@ -11,7 +11,8 @@
   "scripts": {
     "build": "tsc -p ."
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": ["edge", "cloudflare", "cloudflare workers"],
+  "author": "David Friar",
+  "license": "MIT",
+  "homepage": "https://docs.edgeside.org"
 }
