@@ -5,6 +5,6 @@ interface ElementHandlerConstructor {
 }
 
 export interface Config {
-  elements?: Array<[string, ElementHandlerConstructor]>
-  urlRewriteRules?: Array<[string, string]>
+  elements: Array<[string, ElementHandlerConstructor]>
+  urlRewriteRules: Array<[string, string]>
 }

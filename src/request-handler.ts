@@ -11,8 +11,8 @@ declare const ORIGIN_CACHE_EVERYTHING: boolean
 
 declare const DEBUG: string
 
-export async function handleRequest(request: Request, config?: Config): Promise<Response> {
-  const configuration = mergeConfig(defaultConfig, config)
+export async function handleRequest(request: Request, config?: Partial<Config>): Promise<Response> {
+  const configuration = config ? mergeConfig(defaultConfig, config) : defaultConfig
   const url = getOriginURL(request, configuration)
   const response = await fetchOrigin(url)
   if (isHTML(request)) {
@@ -53,9 +53,7 @@ function fetchOrigin(url: URL): Promise<Response> {
 
 function configureHTMLRewriter(config: Config, context: Context): HTMLRewriter {
   let htmlRewriter = new HTMLRewriter()
-  const elements = config.elements ? config.elements : []
-
-  elements.forEach(([name, elementHandler]) => {
+  config.elements.forEach(([name, elementHandler]) => {
     if (DEBUG == 'true') {
       console.log(elementHandler)
     }
