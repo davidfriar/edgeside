@@ -27,7 +27,7 @@ export const defaultConfig: Config = {
 export function mergeConfig(config: Config, config2: Partial<Config>): Config {
   return {
     elements: config.elements.concat(config2.elements ? config2.elements : []),
-    urlRewriteRules: config.urlRewriteRules?.concat(
+    urlRewriteRules: config.urlRewriteRules.concat(
       config2.urlRewriteRules ? config2.urlRewriteRules : [],
     ),
   }
