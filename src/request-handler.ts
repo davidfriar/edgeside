@@ -53,7 +53,9 @@ function fetchOrigin(url: URL): Promise<Response> {
 
 function configureHTMLRewriter(config: Config, context: Context): HTMLRewriter {
   let htmlRewriter = new HTMLRewriter()
-  config.elements?.forEach(([name, elementHandler]) => {
+  const elements = config.elements ?? []
+
+  elements.forEach(([name, elementHandler]) => {
     if (DEBUG == 'true') {
       console.log(elementHandler)
     }
