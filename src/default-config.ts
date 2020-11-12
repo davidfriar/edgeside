@@ -22,13 +22,11 @@ export const defaultConfig: Config = {
     ['debug', DebugElementHandler],
   ],
   urlRewriteRules: [],
-  converters: {},
 }
 
-export function mergeConfig(config: Config, config2: Config): Config {
+export function mergeConfig(config: Config, config2?: Config): Config {
   return {
-    elements: config.elements.concat(config2.elements),
-    urlRewriteRules: config.urlRewriteRules.concat(config2.urlRewriteRules),
-    converters: { ...config.converters, ...config2.converters },
+    elements: config.elements?.concat(config2?.elements ?? []),
+    urlRewriteRules: config.urlRewriteRules?.concat(config2?.urlRewriteRules ?? []),
   }
 }

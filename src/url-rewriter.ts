@@ -1,8 +1,8 @@
 export class URLRewriter {
   rules: Array<[string, string]>
 
-  constructor(rules: Array<[string, string]>) {
-    this.rules = rules
+  constructor(rules?: Array<[string, string]>) {
+    this.rules = rules ?? []
   }
 
   rewrite(path: string): string {

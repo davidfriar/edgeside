@@ -9,10 +9,9 @@ declare const ORIGIN_PROTOCOL: string
 declare const ORIGIN_CACHE_TTL: number
 declare const ORIGIN_CACHE_EVERYTHING: boolean
 
-export async function handleRequest(
-  request: Request,
-  config: Config,
-): Promise<Response> {
+declare const DEBUG: string
+
+export async function handleRequest(request: Request, config?: Config): Promise<Response> {
   const configuration = mergeConfig(defaultConfig, config)
   const url = getOriginURL(request, configuration)
   const response = await fetchOrigin(url)
@@ -54,12 +53,11 @@ function fetchOrigin(url: URL): Promise<Response> {
 
 function configureHTMLRewriter(config: Config, context: Context): HTMLRewriter {
   let htmlRewriter = new HTMLRewriter()
-  config.elements.forEach(([name, elementHandler]) => {
-    console.log(elementHandler)
-    htmlRewriter = htmlRewriter.on(
-      `script[type='edgeside/${name}']`,
-      new elementHandler(context),
-    )
+  config.elements?.forEach(([name, elementHandler]) => {
+    if (DEBUG == 'true') {
+      console.log(elementHandler)
+    }
+    htmlRewriter = htmlRewriter.on(`script[type='edgeside/${name}']`, new elementHandler(context))
   })
   return htmlRewriter
 }
