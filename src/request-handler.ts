@@ -2,14 +2,13 @@ import { Config } from './types'
 import { Context } from './context'
 import { mergeConfig, defaultConfig } from './default-config'
 import { URLRewriter } from './url-rewriter'
+import { debug } from './util'
 
 declare const ORIGIN_HOST: string
 declare const ORIGIN_PATH_PREFIX: string
 declare const ORIGIN_PROTOCOL: string
 declare const ORIGIN_CACHE_TTL: number
 declare const ORIGIN_CACHE_EVERYTHING: boolean
-
-declare const DEBUG: string
 
 export async function handleRequest(request: Request, config?: Partial<Config>): Promise<Response> {
   const configuration = config ? mergeConfig(defaultConfig, config) : defaultConfig
@@ -54,9 +53,7 @@ function fetchOrigin(url: URL): Promise<Response> {
 function configureHTMLRewriter(config: Config, context: Context): HTMLRewriter {
   let htmlRewriter = new HTMLRewriter()
   config.elements.forEach(([name, elementHandler]) => {
-    if (DEBUG == 'true') {
-      console.log(elementHandler)
-    }
+    debug(elementHandler)
     htmlRewriter = htmlRewriter.on(`script[type='edgeside/${name}']`, new elementHandler(context))
   })
   return htmlRewriter

@@ -5,8 +5,7 @@ import {
   ContextWriter,
   replaceExpressions,
 } from './base-element'
-
-declare const DEBUG: string
+import { debug } from '../util'
 
 export abstract class QueryElementHandler extends BaseElementHandler {
   endpoint!: string
@@ -28,9 +27,7 @@ export abstract class QueryElementHandler extends BaseElementHandler {
       this.input = this.getOptionalContextReader(element)
       this.endpoint = this.getAttribute('endpoint', element)
       this.cacheTTL = this.getOptionalNumberAttribute('cache-ttl', element, 60)
-      this.variables = this.parseParameterMap(
-        this.getOptionalAttribute('parameter-map', element),
-      )
+      this.variables = this.parseParameterMap(this.getOptionalAttribute('parameter-map', element))
     }
     element.remove()
   }
@@ -73,9 +70,7 @@ export abstract class QueryElementHandler extends BaseElementHandler {
 
   fetchData(): Promise<Response> {
     const url = this.getDataURL()
-    if (DEBUG == 'true') {
-      console.log('fetching data from:' + url.toString())
-    }
+    debug('fetching data from:' + url.toString())
     return fetch(url, {
       method: 'GET',
       headers: {
@@ -90,18 +85,14 @@ export abstract class QueryElementHandler extends BaseElementHandler {
     if (this.output.done) {
       return
     }
-    if (DEBUG == 'true') {
-      console.log('Variables before replacement = ', this.variables)
-    }
+    debug('Variables before replacement = ', this.variables)
     if (this.input) {
       const data = await this.input.getJSON()
       for (const key in this.variables) {
         this.variables[key] = replaceExpressions(this.variables[key], data)
       }
     }
-    if (DEBUG == 'true') {
-      console.log('Variables after replacement = ', this.variables)
-    }
+    debug('Variables after replacement = ', this.variables)
     this.storeData(this.fetchData())
   }
 }
