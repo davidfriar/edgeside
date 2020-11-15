@@ -1,6 +1,7 @@
 import { Context } from '../context'
 import { parse, eval } from 'expression-eval'
 import { decode } from 'he'
+import { debug } from '../util'
 
 const ATTR_PREFIX = 'data-edgeside-'
 
@@ -29,7 +30,7 @@ export class ContextReader extends ContextWrapper {
 
   async replaceExpressions(s: string): Promise<string> {
     if (this.context.hasData(this.key)) {
-      return replaceExpressions(s, this.getJSON())
+      return replaceExpressions(s, await this.getJSON())
     } else {
       return s
     }
@@ -77,27 +78,17 @@ export abstract class BaseElementHandler {
     return new ContextWriter(this.context, this.getAttribute('output', element))
   }
 
-  protected getOptionalContextReader(
-    element: Element,
-  ): ContextReader | undefined {
+  protected getOptionalContextReader(element: Element): ContextReader | undefined {
     if (this.hasAttribute('input', element)) {
-      return new ContextReader(
-        this.context,
-        this.getAttribute('input', element),
-      )
+      return new ContextReader(this.context, this.getAttribute('input', element))
     } else {
       return undefined
     }
   }
 
-  protected getOptionalContextWriter(
-    element: Element,
-  ): ContextReader | undefined {
+  protected getOptionalContextWriter(element: Element): ContextReader | undefined {
     if (this.hasAttribute('output', element)) {
-      return new ContextReader(
-        this.context,
-        this.getAttribute('output', element),
-      )
+      return new ContextReader(this.context, this.getAttribute('output', element))
     } else {
       return undefined
     }
@@ -107,9 +98,7 @@ export abstract class BaseElementHandler {
     const value = element.getAttribute(ATTR_PREFIX + name)
     if (!value) {
       const elementType = element.getAttribute('type')
-      throw new Error(
-        `Element '${elementType}' is missing required attribute: ${name}`,
-      )
+      throw new Error(`Element '${elementType}' is missing required attribute: ${name}`)
     }
     return decode(value, { isAttributeValue: true })
   }
@@ -144,14 +133,19 @@ export abstract class BaseElementHandler {
 }
 
 export function replaceExpressions(s: string, data: any): string {
-  console.log('entering replaceExpressions. data:', data)
+  debug('entering replaceExpressions. data:', data)
+  debug('replacing in string:', s)
   // match expressions like ${foo}
   const re = /\$\{[^}]*\}/g
   return s.replace(re, (x) => {
+    debug('replacing', x)
     //use a function to evaluate any matches
     const expression = x.substring(2, x.length - 1) // remove the '${' and '}'
+    debug('expression', expression)
     const ast = parse(expression)
     const result = eval(ast, data)
+
+    debug('result', result)
     return result
   })
 }

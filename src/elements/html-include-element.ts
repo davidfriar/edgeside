@@ -41,7 +41,7 @@ export class HTMLIncludeElementHandler extends BaseElementHandler {
   private async getIncludeURL(): Promise<string> {
     let url = this.endpoint
     if (this.input) {
-      await this.input.replaceExpressions(this.endpoint)
+      url = await this.input.replaceExpressions(this.endpoint)
     }
     if (url.startsWith('/')) {
       try {
