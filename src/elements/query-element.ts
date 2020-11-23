@@ -1,10 +1,5 @@
 import { Context } from '../context'
-import {
-  BaseElementHandler,
-  ContextReader,
-  ContextWriter,
-  replaceExpressions,
-} from './base-element'
+import { BaseElementHandler, ContextReader, ContextWriter } from './base-element'
 import { debug } from '../util'
 
 export abstract class QueryElementHandler extends BaseElementHandler {
@@ -54,8 +49,8 @@ export abstract class QueryElementHandler extends BaseElementHandler {
       const segments = this.url.pathname.split('/')
       return segments[segments.length - n - 1]
     } else {
-      if (this.input && paramName.indexOf('$') > -1) {
-        return paramName
+      if (paramName.indexOf('$') > -1) {
+        return this.replaceGlobalExpressions(paramName)
       } else {
         return this.url.searchParams.get(paramName)
       }
@@ -89,7 +84,7 @@ export abstract class QueryElementHandler extends BaseElementHandler {
     if (this.input) {
       const data = await this.input.getJSON()
       for (const key in this.variables) {
-        this.variables[key] = replaceExpressions(this.variables[key], data)
+        this.variables[key] = this.input.replaceExpressions(this.variables[key], data)
       }
     }
     debug('Variables after replacement = ', this.variables)

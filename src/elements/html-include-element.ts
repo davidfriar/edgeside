@@ -40,6 +40,7 @@ export class HTMLIncludeElementHandler extends BaseElementHandler {
 
   private async getIncludeURL(): Promise<string> {
     let url = this.endpoint
+    url = this.replaceGlobalExpressions(url)
     if (this.input) {
       url = await this.input.replaceExpressions(this.endpoint)
     }

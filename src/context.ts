@@ -4,11 +4,13 @@ export class Context {
   readonly request: Request
   readonly originURL: URL
   private data: { [key: string]: Promise<Response> }
+  readonly env: { [key: string]: string }
 
   constructor(request: Request, originURL: URL) {
     this.data = {}
     this.request = request
     this.originURL = originURL
+    this.env = this.readEnv()
   }
 
   put(key: string, promise: Promise<Response>) {
@@ -35,6 +37,17 @@ export class Context {
 
   hasData(key: string): boolean {
     return key in this.data
+  }
+
+  private readEnv(): { [k: string]: string } {
+    const glbl: { [key: string]: any } = globalThis
+    const result: { [key: string]: string } = {}
+    for (const key in glbl) {
+      if (typeof glbl[key] == 'string') {
+        result[key] = glbl[key] as string
+      }
+    }
+    return result
   }
 
   private async getResponse(key: string): Promise<Response> {

@@ -28,8 +28,10 @@ export class ContextReader extends ContextWrapper {
     return this.context.getText(this.key)
   }
 
-  async replaceExpressions(s: string): Promise<string> {
-    if (this.context.hasData(this.key)) {
+  async replaceExpressions(s: string, data?: any): Promise<string> {
+    if (data) {
+      return replaceExpressions(s, data)
+    } else if (this.context.hasData(this.key)) {
       return replaceExpressions(s, await this.getJSON())
     } else {
       return s
@@ -130,9 +132,13 @@ export abstract class BaseElementHandler {
   protected hasAttribute(attributeName: string, element: Element): boolean {
     return element.hasAttribute(ATTR_PREFIX + attributeName)
   }
+
+  protected replaceGlobalExpressions(s: string) {
+    return replaceExpressions(s, this.context.env)
+  }
 }
 
-export function replaceExpressions(s: string, data: any): string {
+function replaceExpressions(s: string, data: any): string {
   debug('entering replaceExpressions. data:', data)
   debug('replacing in string:', s)
   // match expressions like ${foo}
