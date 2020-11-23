@@ -148,10 +148,14 @@ function replaceExpressions(s: string, data: any): string {
     //use a function to evaluate any matches
     const expression = x.substring(2, x.length - 1) // remove the '${' and '}'
     debug('expression', expression)
-    const ast = parse(expression)
-    const result = eval(ast, data)
-
-    debug('result', result)
-    return result
+    try {
+      const ast = parse(expression)
+      const result = eval(ast, data)
+      debug('result', result)
+      return result
+    } catch (err) {
+      debug('could not evaluate, returning string unchanged')
+      return x
+    }
   })
 }

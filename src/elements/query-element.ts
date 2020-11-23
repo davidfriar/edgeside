@@ -84,7 +84,7 @@ export abstract class QueryElementHandler extends BaseElementHandler {
     if (this.input) {
       const data = await this.input.getJSON()
       for (const key in this.variables) {
-        this.variables[key] = this.input.replaceExpressions(this.variables[key], data)
+        this.variables[key] = await this.input.replaceExpressions(this.variables[key], data)
       }
     }
     debug('Variables after replacement = ', this.variables)
