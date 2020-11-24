@@ -63,15 +63,27 @@ export abstract class QueryElementHandler extends BaseElementHandler {
 
   abstract getDataURL(): string
 
+  getHeaders(): { [key: string]: string } {
+    const headers: { [key: string]: string } = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    }
+
+    Object.entries(this.variables).forEach(([name, value]) => {
+      if (name.startsWith('#')) {
+        headers[name.substring(1)] = value
+      }
+    })
+    debug('headers', headers)
+    return headers
+  }
+
   fetchData(): Promise<Response> {
     const url = this.getDataURL()
     debug('fetching data from:' + url.toString())
     return fetch(url, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
+      headers: this.getHeaders(),
       cf: { cacheTtl: this.cacheTTL, cacheEverything: true },
     })
   }

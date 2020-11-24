@@ -19,7 +19,7 @@ export class RESTElementHandler extends QueryElementHandler {
           .split('/')
           .map((s) => (s === name ? value : s))
           .join('/')
-      } else {
+      } else if (!name.startsWith('#')) {
         url.searchParams.append(name, value)
       }
     })
