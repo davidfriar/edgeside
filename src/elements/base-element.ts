@@ -152,7 +152,7 @@ function replaceExpressions(s: string, data: any): string {
       const ast = parse(expression)
       const result = eval(ast, data)
       debug('result', result)
-      return result
+      return result ?? x
     } catch (err) {
       debug('could not evaluate, returning string unchanged')
       return x
