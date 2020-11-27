@@ -10,10 +10,13 @@ export abstract class QueryElementHandler extends BaseElementHandler {
 
   variables: { [key: string]: any } = {}
   url: URL
+  method: string
+  body: string | undefined
 
   constructor(context: Context) {
     super(context)
     this.url = new URL(context.request.url)
+    this.method = 'GET'
   }
 
   element(element: Element) {
@@ -82,9 +85,10 @@ export abstract class QueryElementHandler extends BaseElementHandler {
     const url = this.getDataURL()
     debug('fetching data from:' + url.toString())
     return fetch(url, {
-      method: 'GET',
+      method: this.method,
       headers: this.getHeaders(),
       cf: { cacheTtl: this.cacheTTL, cacheEverything: true },
+      body: this.body,
     })
   }
 
