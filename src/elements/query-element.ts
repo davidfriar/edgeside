@@ -17,14 +17,15 @@ export abstract class QueryElementHandler extends BaseElementHandler {
     super(context)
     this.url = new URL(context.request.url)
     this.method = 'GET'
+    this.cacheTTL = 60
   }
 
   element(element: Element) {
     this.output = this.getContextWriter(element)
     if (!this.output.done) {
       this.input = this.getOptionalContextReader(element)
-      this.endpoint = this.getAttribute('endpoint', element)
-      this.cacheTTL = this.getOptionalNumberAttribute('cache-ttl', element, 60)
+      this.endpoint = this.getAttributeOr('endpoint', element, this.endpoint)
+      this.cacheTTL = this.getOptionalNumberAttribute('cache-ttl', element, this.cacheTTL)
       this.variables = this.parseParameterMap(this.getOptionalAttribute('parameter-map', element))
     }
     element.remove()

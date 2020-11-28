@@ -117,6 +117,16 @@ export abstract class BaseElementHandler {
     }
   }
 
+  protected getAttributeOr(name: string, element: Element, fallback?: string): string {
+    const result = this.getOptionalAttribute(name, element, fallback)
+    if (result) {
+      return result
+    } else {
+      const elementType = element.getAttribute('type')
+      throw new Error(`Element '${elementType}' is missing required attribute: ${name}`)
+    }
+  }
+
   protected getOptionalNumberAttribute(
     name: string,
     element: Element,
