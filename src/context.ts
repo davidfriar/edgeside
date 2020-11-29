@@ -7,14 +7,14 @@ export class Context {
   readonly originURL: URL
   private data: { [key: string]: Promise<Response> }
   readonly env: { [key: string]: string }
-  private response: Response
+  readonly newHeaders: Headers
 
-  constructor(request: Request, response: Response, originURL: URL) {
+  constructor(request: Request, originURL: URL) {
     this.data = {}
     this.request = request
-    this.response = response
     this.originURL = originURL
     this.env = this.readEnv()
+    this.newHeaders = new Headers()
   }
 
   get sessionId(): string {
@@ -23,7 +23,7 @@ export class Context {
       return cookies.sessionId
     } else {
       const id = uuidv4()
-      this.response.headers.set(
+      this.newHeaders.set(
         'Set-Cookie',
         cookie.serialize('sessionId', id, {
           httpOnly: true,

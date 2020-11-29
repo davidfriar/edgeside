@@ -13,14 +13,17 @@ declare const ORIGIN_CACHE_EVERYTHING: boolean
 export async function handleRequest(request: Request, config?: Partial<Config>): Promise<Response> {
   const configuration = config ? mergeConfig(defaultConfig, config) : defaultConfig
   const url = getOriginURL(request, configuration)
-  const response = await fetchOrigin(url)
+  let response = await fetchOrigin(url)
   if (isHTML(request)) {
-    const context = new Context(request, response, url)
+    const context = new Context(request, url)
     const htmlRewriter = configureHTMLRewriter(configuration, context)
-    return htmlRewriter.transform(response)
-  } else {
-    return response
+    response = htmlRewriter.transform(response)
+    response = new Response(response.body, response)
+    context.newHeaders.forEach((key, value) => {
+      response.headers.append(key, value)
+    })
   }
+  return response
 }
 
 function isHTML(request: Request) {
