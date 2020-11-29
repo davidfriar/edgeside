@@ -15,7 +15,7 @@ export async function handleRequest(request: Request, config?: Partial<Config>):
   const url = getOriginURL(request, configuration)
   const response = await fetchOrigin(url)
   if (isHTML(request)) {
-    const context = new Context(request, url)
+    const context = new Context(request, response, url)
     const htmlRewriter = configureHTMLRewriter(configuration, context)
     return htmlRewriter.transform(response)
   } else {

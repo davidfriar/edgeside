@@ -146,6 +146,10 @@ export abstract class BaseElementHandler {
   protected replaceGlobalExpressions(s: string) {
     return replaceExpressions(s, this.context.env)
   }
+
+  protected get sessionId(): string {
+    return this.context.sessionId
+  }
 }
 
 function replaceExpressions(s: string, data: any): string {
