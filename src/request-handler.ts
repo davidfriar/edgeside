@@ -19,9 +19,9 @@ export async function handleRequest(request: Request, config?: Partial<Config>):
     const htmlRewriter = configureHTMLRewriter(configuration, context)
     response = htmlRewriter.transform(response)
     response = new Response(response.body, response)
-    context.newHeaders.forEach((key, value) => {
-      response.headers.append(key, value)
-    })
+    for (let header of context.newHeaders.entries()) {
+      response.headers.append(header[0], header[1])
+    }
   }
   return response
 }
