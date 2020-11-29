@@ -1,6 +1,6 @@
 {
   "name": "edgeside",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "A framework for edgeside processing",
   "main": "lib/index.js",
   "types": "lib",
