@@ -2,6 +2,7 @@ import { Context } from '../context'
 import { parse, eval } from 'expression-eval'
 import { decode } from 'he'
 import { debug } from '../util'
+import { Cookie } from '../types'
 
 const ATTR_PREFIX = 'data-edgeside-'
 
@@ -147,8 +148,16 @@ export abstract class BaseElementHandler {
     return replaceExpressions(s, this.context.env)
   }
 
-  protected get sessionId(): string {
-    return this.context.sessionId
+  protected getCookie(name: string): Cookie {
+    return this.context.cookies[name]
+  }
+
+  protected get sessionCookie(): Cookie {
+    return this.getCookie('edgeside-session')
+  }
+
+  protected get permanentCookie(): Cookie {
+    return this.getCookie('edgeside-permanent')
   }
 }
 

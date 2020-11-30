@@ -10,7 +10,13 @@ export class DebugElementHandler extends BaseElementHandler {
 
   async element(element: Element) {
     this.input = this.getContextReader(element)
-    element.after(await this.input.getText())
+    element.after(
+      (await this.input.getText()) +
+        `sessionid: ${JSON.stringify(this.sessionCookie)}  permid: ${JSON.stringify(
+          this.permanentCookie,
+        )}`,
+    )
+
     element.remove()
   }
 }

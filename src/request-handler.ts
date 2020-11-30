@@ -3,6 +3,7 @@ import { Context } from './context'
 import { mergeConfig, defaultConfig } from './default-config'
 import { URLRewriter } from './url-rewriter'
 import { debug } from './util'
+import { CookieManager } from './cookies'
 
 declare const ORIGIN_HOST: string
 declare const ORIGIN_PATH_PREFIX: string
@@ -13,17 +14,20 @@ declare const ORIGIN_CACHE_EVERYTHING: boolean
 export async function handleRequest(request: Request, config?: Partial<Config>): Promise<Response> {
   const configuration = config ? mergeConfig(defaultConfig, config) : defaultConfig
   const url = getOriginURL(request, configuration)
-  let response = await fetchOrigin(url)
+  const response = makeHeadersMutable(await fetchOrigin(url))
+
   if (isHTML(request)) {
-    const context = new Context(request, url)
+    const cookieManager = new CookieManager(request, response, configuration)
+    const context = new Context(request, url, cookieManager.cookies)
     const htmlRewriter = configureHTMLRewriter(configuration, context)
-    response = htmlRewriter.transform(response)
-    response = new Response(response.body, response)
-    for (let header of context.newHeaders.entries()) {
-      response.headers.append(header[0], header[1])
-    }
+    return htmlRewriter.transform(response)
+  } else {
+    return response
   }
-  return response
+}
+
+function makeHeadersMutable(response: Response): Response {
+  return new Response(response.body, response)
 }
 
 function isHTML(request: Request) {

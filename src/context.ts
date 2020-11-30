@@ -1,36 +1,19 @@
 import { debug } from './util'
-import { v4 as uuidv4 } from 'uuid'
-import cookie from 'cookie'
+import { CookieStore } from './types'
 
 export class Context {
   readonly request: Request
   readonly originURL: URL
+  readonly cookies: CookieStore
   private data: { [key: string]: Promise<Response> }
   readonly env: { [key: string]: string }
-  readonly newHeaders: Headers
 
-  constructor(request: Request, originURL: URL) {
+  constructor(request: Request, originURL: URL, cookies: CookieStore) {
     this.data = {}
     this.request = request
     this.originURL = originURL
     this.env = this.readEnv()
-    this.newHeaders = new Headers()
-  }
-
-  get sessionId(): string {
-    let cookies = cookie.parse(this.request.headers.get('cookie') ?? '')
-    if (cookies.sessionId) {
-      return cookies.sessionId
-    } else {
-      const id = uuidv4()
-      this.newHeaders.set(
-        'Set-Cookie',
-        cookie.serialize('sessionId', id, {
-          httpOnly: true,
-        }),
-      )
-      return id
-    }
+    this.cookies = cookies
   }
 
   put(key: string, promise: Promise<Response>) {
