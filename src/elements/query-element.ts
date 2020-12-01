@@ -110,7 +110,9 @@ export abstract class QueryElementHandler extends BaseElementHandler {
     let resp = this.fetchData()
     if (this.transformData) {
       const response = await resp
-      resp = new Response(this.transformData(await response.json()), response)
+      resp = Promise.resolve(
+        new Response(JSON.stringify(this.transformData(await response.json())), response),
+      )
     }
     this.storeData(resp)
   }
