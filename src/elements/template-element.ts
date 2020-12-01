@@ -22,9 +22,10 @@ export class TemplateElementHandler extends BaseElementHandler {
     text.remove()
     if (text.lastInTextNode) {
       const json = await this.input.getJSON()
-      debug('about to render template', json, JSON.stringify(json), this.template)
-
-      text.after(Mustache.render(this.template, json), { html: true })
+      debug('about to render template', JSON.stringify(json), this.template)
+      const result = Mustache.render(this.template, json)
+      console.log('result: ', result)
+      text.after(result, { html: true })
     }
   }
 }
