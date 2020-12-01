@@ -7,6 +7,7 @@ export abstract class QueryElementHandler extends BaseElementHandler {
   cacheTTL!: number
   input?: ContextReader
   output!: ContextWriter
+  transformData?: (data: any) => any
 
   variables: { [key: string]: any } = {}
   url: URL
@@ -105,6 +106,12 @@ export abstract class QueryElementHandler extends BaseElementHandler {
       }
     }
     debug('Variables after replacement = ', this.variables)
-    this.storeData(this.fetchData())
+
+    let resp = this.fetchData()
+    if (this.transformData) {
+      const response = await resp
+      resp = new Response(this.transformData(await response.json()), response)
+    }
+    this.storeData(resp)
   }
 }
