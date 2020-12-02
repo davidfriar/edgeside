@@ -26,6 +26,7 @@ export const defaultConfig: Config = {
     ['edgeside-session', { httpOnly: true, path: '/' }],
     ['edgeside-permanent', { httpOnly: true, path: '/', maxAge: 365 * 24 * 60 * 60 * 1000 }],
   ],
+  routes: [],
 }
 
 export function mergeConfig(config: Config, config2: Partial<Config>): Config {
@@ -33,5 +34,6 @@ export function mergeConfig(config: Config, config2: Partial<Config>): Config {
     elements: config.elements.concat(config2.elements ?? []),
     urlRewriteRules: config.urlRewriteRules.concat(config2.urlRewriteRules ?? []),
     cookies: config.cookies.concat(config2.cookies ?? []),
+    routes: config.routes.concat(config2.routes ?? []),
   }
 }

@@ -15,6 +15,7 @@
     "he": "^1.2.0",
     "jsonata": "^1.8.3",
     "mustache": "^4.0.1",
+    "tiny-request-router": "^1.2.2",
     "uuid": "^8.3.1"
   },
   "devDependencies": {

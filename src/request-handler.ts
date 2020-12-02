@@ -4,6 +4,7 @@ import { mergeConfig, defaultConfig } from './default-config'
 import { URLRewriter } from './url-rewriter'
 import { debug } from './util'
 import { CookieManager } from './cookies'
+import { handleCustomRoutes } from './router'
 
 declare const ORIGIN_HOST: string
 declare const ORIGIN_PATH_PREFIX: string
@@ -13,8 +14,14 @@ declare const ORIGIN_CACHE_EVERYTHING: boolean
 
 export async function handleRequest(request: Request, config?: Partial<Config>): Promise<Response> {
   const configuration = config ? mergeConfig(defaultConfig, config) : defaultConfig
+
+  let response = await handleCustomRoutes(request, configuration)
+  if (response) {
+    return response
+  }
+
   const url = getOriginURL(request, configuration)
-  const response = makeHeadersMutable(await fetchOrigin(url))
+  response = makeHeadersMutable(await fetchOrigin(url))
 
   if (isHTML(request)) {
     const cookieManager = new CookieManager(request, response, configuration)
