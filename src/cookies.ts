@@ -6,29 +6,35 @@ export class CookieManager {
   readonly cookies: CookieStore
   private cookieConfig: Array<[string, CookieOptions]>
 
-  constructor(request: Request, response: Response, config: Config) {
+  constructor(request: Request, config: Config) {
     this.cookieConfig = config.cookies
     this.cookies = this.readCookies(request)
-    this.writeCookies(response)
   }
 
   readCookies(request: Request): CookieStore {
-    return Object.fromEntries(
-      Object.entries(cookie.parse(request.headers.get('cookie') ?? '')).map(([k, v]) => [
-        k,
-        { value: v, isNew: false },
-      ]),
-    )
+    const cookies: CookieStore = {}
+    const cookiesFound = cookie.parse(request.headers.get('cookie') ?? '')
+    this.cookieConfig.forEach(([name, options]) => {
+      if (cookiesFound[name]) {
+        cookies[name] = { value: cookiesFound[name], isNew: false }
+      } else {
+        const value = options.generator ? options.generator() : uuidv4()
+        cookies[name] = { value: value, isNew: true }
+      }
+    })
+    return cookies
   }
 
-  writeCookies(response: Response) {
+  writeCookies(response: Response): Response {
+    const result = new Response(response.body, response)
     this.cookieConfig.forEach(([name, options]) => {
-      if (!this.cookies[name]) {
+      if (this.cookies[name].isNew) {
         const value = options.generator ? options.generator() : uuidv4()
-        response.headers.append('Set-Cookie', cookie.serialize(name, value, options))
+        result.headers.append('Set-Cookie', cookie.serialize(name, value, options))
         this.cookies[name] = { value: value, isNew: true }
       }
       // to do : add update function if we need this
     })
+    return result
   }
 }

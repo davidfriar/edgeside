@@ -1,5 +1,5 @@
 export { handleRequest } from './request-handler'
-export { Config, RouteParams, RouteHandler } from './types'
+export { Config, RouteParams, RouteHandler, CookieManager } from './types'
 export { debug } from './util'
 export { Context } from './context'
 export * from './elements'

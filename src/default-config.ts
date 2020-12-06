@@ -1,4 +1,5 @@
 import { Config } from './types'
+import { handleDefaultRoute } from './default-route'
 import {
   GraphQLElementHandler,
   RESTElementHandler,
@@ -26,7 +27,7 @@ export const defaultConfig: Config = {
     ['edgeside-session', { httpOnly: true, path: '/' }],
     ['edgeside-permanent', { httpOnly: true, path: '/', maxAge: 365 * 24 * 60 * 60 * 1000 }],
   ],
-  routes: [],
+  routes: [['GET', '*', handleDefaultRoute]],
 }
 
 export function mergeConfig(config: Config, config2: Partial<Config>): Config {
